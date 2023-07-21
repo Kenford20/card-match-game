@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 interface CardGameBoardProps {
   setNumCards: Function
@@ -11,11 +11,11 @@ const CardGameBoard: React.FC<CardGameBoardProps> = (props:CardGameBoardProps) =
   const [board, setBoard] = useState(cards);
   console.log(board)
   const [revealedCards, setRevealedCards] = useState<[number, number|String][]>([]);
-  const [isMatching, setIsMatching] = useState(false);
+  let isBusy = useRef(false);
 
   const handleCardClick = (setBoard:Function, cardIndex:number, number:String|number) => {
     console.log('reveal', revealedCards)
-    if (isMatching) return;
+    if (isBusy.current) return;
     if (board[cardIndex][1] === 'matched') return;
     setBoard(board.map((card, i) => i === cardIndex ? [card[0], 'revealed'] : card));
     setRevealedCards([...revealedCards, [cardIndex, number]]);
@@ -26,15 +26,17 @@ const CardGameBoard: React.FC<CardGameBoardProps> = (props:CardGameBoardProps) =
     let [firstIndex, first] = revealedCards[revealedCards.length-1];
     let [secondIndex, second] = revealedCards[revealedCards.length-2];
     if (revealedCards.length > 0 && revealedCards.length % 2 === 0) {
-      setIsMatching(true);
+      isBusy.current = true;
       if (first == second) {
         console.log(first)
         console.log(second)
         setBoard(oldBoard => oldBoard.map((card, i) => (i === firstIndex || i === secondIndex) ? [card[0], 'matched'] : card));
       } else {
         console.log('no match?')
-        setTimeout(() => setBoard(oldBoard => oldBoard.map((card, i) => (i === firstIndex || i === secondIndex) ? [card[0], 'hidden'] : card)), 3000)
-        setIsMatching(false);
+        setTimeout(() => {
+          setBoard(oldBoard => oldBoard.map((card, i) => (i === firstIndex || i === secondIndex) ? [card[0], 'hidden'] : card));
+          isBusy.current = false;
+        }, 3000)
       }
     }
   }, [revealedCards]);
@@ -51,10 +53,7 @@ const CardGameBoard: React.FC<CardGameBoardProps> = (props:CardGameBoardProps) =
       <div className="grid gap-4 grid-cols-4">
         {board.map(([number, cardState], i) =>
           <span
-            onClick={() => {
-              console.log('ism', isMatching)
-              handleCardClick(setBoard, i, number)
-            }}
+            onClick={() => handleCardClick(setBoard, i, number)}
             className="card cursor-pointer border border-sky-500 rounded-md px-10 py-16 text-3xl bg-black min-w-full h-40 inline-flex justify-center items-center"
             key={i}
           >
