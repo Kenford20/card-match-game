@@ -3,59 +3,64 @@ import { useEffect, useState, useRef } from 'react';
 
 interface CardGameBoardProps {
   setNumCards: Function
-  cards: (String | number)[][]
+  cards: [number, string][]
 }
 
 const CardGameBoard: React.FC<CardGameBoardProps> = (props:CardGameBoardProps) => {
   const { setNumCards, cards } = props;
-  const [board, setBoard] = useState(cards);
-  console.log(board)
-  const [revealedCards, setRevealedCards] = useState<[number, number|String][]>([]);
-  let isBusy = useRef(false);
+  const [board, setBoard] = useState<[number, string][]>(cards);
+  const [matchedCards, setMatchedCards] = useState<number>(0);
 
-  const handleCardClick = (setBoard:Function, cardIndex:number, number:String|number) => {
-    console.log('reveal', revealedCards)
+  let isBusy = useRef(false);
+  let firstCard:any = useRef(null);
+  let secondCard:any = useRef(null);
+  
+  const handleCardClick = (setBoard:Function, cardIndex:number, number:number) => {
     if (isBusy.current) return;
     if (board[cardIndex][1] === 'matched') return;
     setBoard(board.map((card, i) => i === cardIndex ? [card[0], 'revealed'] : card));
-    setRevealedCards([...revealedCards, [cardIndex, number]]);
+    
+    if (firstCard.current === null) firstCard.current = [cardIndex, number];
+    else secondCard.current = [cardIndex, number];
   }
-  
-  useEffect(() => {
-    if (revealedCards.length < 2) return;
-    let [firstIndex, first] = revealedCards[revealedCards.length-1];
-    let [secondIndex, second] = revealedCards[revealedCards.length-2];
-    if (revealedCards.length > 0 && revealedCards.length % 2 === 0) {
-      isBusy.current = true;
-      if (first == second) {
-        console.log(first)
-        console.log(second)
-        setBoard(oldBoard => oldBoard.map((card, i) => (i === firstIndex || i === secondIndex) ? [card[0], 'matched'] : card));
-      } else {
-        console.log('no match?')
-        setTimeout(() => {
-          setBoard(oldBoard => oldBoard.map((card, i) => (i === firstIndex || i === secondIndex) ? [card[0], 'hidden'] : card));
-          isBusy.current = false;
-        }, 3000)
-      }
-    }
-  }, [revealedCards]);
 
   useEffect(() => {
-    if (board.every(card => card[1] === 'matched')) {
+    if (firstCard.current === null || secondCard.current === null) return;
+
+    let [firstIndex, first] = firstCard.current;
+    let [secondIndex, second] = secondCard.current;
+
+    if (first == second) {
+      setMatchedCards(matchedCards + 2);
+      setBoard(oldBoard => oldBoard.map((card, i) => (i === firstIndex || i === secondIndex) ? [card[0], 'matched'] : card));
+    } else {
+      isBusy.current = true;
+      setTimeout(() => {
+        setBoard(oldBoard => oldBoard.map((card, i) => (i === firstIndex || i === secondIndex) ? [card[0], 'hidden'] : card));
+        isBusy.current = false;
+      }, 2500)
+    }
+    firstCard.current = null;
+    secondCard.current = null;
+
+  }, [board, matchedCards]);
+
+  useEffect(() => {
+    if (matchedCards === board.length) {
       // dispatch usecontext/usereducer action to show modal on root page
       window.alert('you win woo');
     }
-  }, [board]);
+  }, [board, matchedCards]);
 
   return (
     <div id="card-game-board" className="flex flex-col justify-center items-center h-screen py-20">
       <div className="grid gap-4 grid-cols-4">
         {board.map(([number, cardState], i) =>
           <span
-            onClick={() => handleCardClick(setBoard, i, number)}
+            onClick={e => handleCardClick(setBoard, i, number)}
             className="card cursor-pointer border border-sky-500 rounded-md px-10 py-16 text-3xl bg-black min-w-full h-40 inline-flex justify-center items-center"
             key={i}
+            data-target={i}
           >
             <span className={"text-white" + ' ' + `${(cardState === 'revealed' || cardState === 'matched') ? '' : 'hidden'}`}>{`${number}`}</span>
             <Image
