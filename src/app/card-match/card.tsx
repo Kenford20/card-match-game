@@ -11,22 +11,24 @@ const GameCard: React.FC<GameCardProps> = (props:GameCardProps) => {
   const { cardIndex, cardNumber, cardState, handleCardClick } = props;
 
   return (
-    <>
-      <span
-        onClick={() => handleCardClick(cardIndex, cardNumber)}
-        className="card cursor-pointer border border-sky-500 rounded-md px-10 py-16 text-3xl bg-black min-w-full h-40 inline-flex justify-center items-center"
-      >
-        <span className={"text-white" + ' ' + `${(cardState === 'revealed' || cardState === 'matched') ? '' : 'hidden'}`}>{`${cardNumber}`}</span>
+    <div
+      onClick={() => handleCardClick(cardIndex, cardNumber)}
+      className={"card cursor-pointer px-10 py-16 text-3xl min-w-full h-40 inline-flex justify-center items-center" + `${(cardState === 'revealed' || cardState === 'matched') ? '  visible' : ''}`}
+    >
+      <div className="card-face card-back">
         <Image
           src="/next.svg"
           alt="Next Logo"
-          className={'dark:invert' + ' ' + `${(cardState === 'revealed' || cardState === 'matched') ? 'hidden' : ''}`}
+          className='card-back dark:invert'
           width={50}
           height={24}
           priority
         />
-      </span>
-    </>
+      </div>
+      <div className="card-face card-front">
+        <span>{`${cardNumber}`}</span>
+      </div>
+    </div>
   )
 }
 
