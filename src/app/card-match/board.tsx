@@ -1,5 +1,5 @@
-import Image from 'next/image'
 import { useEffect, useState, useRef } from 'react';
+import GameCard from './card';
 
 interface CardGameBoardProps {
   setNumCards: Function
@@ -15,7 +15,7 @@ const CardGameBoard: React.FC<CardGameBoardProps> = (props:CardGameBoardProps) =
   let firstCard:any = useRef(null);
   let secondCard:any = useRef(null);
   
-  const handleCardClick = (setBoard:Function, cardIndex:number, number:number) => {
+  const handleCardClick = (cardIndex:number, number:number) => {
     if (isBusy.current) return;
     if (board[cardIndex][1] === 'matched') return;
     setBoard(board.map((card, i) => i === cardIndex ? [card[0], 'revealed'] : card));
@@ -56,22 +56,7 @@ const CardGameBoard: React.FC<CardGameBoardProps> = (props:CardGameBoardProps) =
     <div id="card-game-board" className="flex flex-col justify-center items-center h-screen py-20">
       <div className="grid gap-4 grid-cols-4">
         {board.map(([number, cardState], i) =>
-          <span
-            onClick={e => handleCardClick(setBoard, i, number)}
-            className="card cursor-pointer border border-sky-500 rounded-md px-10 py-16 text-3xl bg-black min-w-full h-40 inline-flex justify-center items-center"
-            key={i}
-            data-target={i}
-          >
-            <span className={"text-white" + ' ' + `${(cardState === 'revealed' || cardState === 'matched') ? '' : 'hidden'}`}>{`${number}`}</span>
-            <Image
-              src="/next.svg"
-              alt="Next Logo"
-              className={'dark:invert' + ' ' + `${(cardState === 'revealed' || cardState === 'matched') ? 'hidden' : ''}`}
-              width={50}
-              height={24}
-              priority
-            />
-          </span>
+          <GameCard key={i} cardIndex={i} cardNumber={number} cardState={cardState} handleCardClick={handleCardClick}/>
         )}
       </div>
       <button onClick={() => setNumCards(0)} className="border-2 border-purple-600 px-5 py-3 mt-5">RESTART</button>
