@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import GameCard from './card';
+import { useTheme, useToggleTheme } from './contexts/theme-context';
 
 interface CardGameBoardProps {
   setNumCards: Function
@@ -10,6 +11,8 @@ const CardGameBoard: React.FC<CardGameBoardProps> = (props:CardGameBoardProps) =
   const { setNumCards, cards } = props;
   const [board, setBoard] = useState<[number, string][]>(cards);
   const [matchedCards, setMatchedCards] = useState<number>(0);
+  const theme = useTheme();
+  const toggleTheme = useToggleTheme();
 
   let isBusy = useRef(false);
   let firstCard:any = useRef(null);
@@ -60,6 +63,7 @@ const CardGameBoard: React.FC<CardGameBoardProps> = (props:CardGameBoardProps) =
         )}
       </div>
       <button onClick={() => setNumCards(0)} className="border-2 border-purple-600 px-5 py-3 mt-5">RESTART</button>
+      <button onClick={toggleTheme}>theme</button>
     </div>
   )
 }
