@@ -20,7 +20,8 @@ const CardMatchPage: React.FC<CardMatchProps> = (props:CardMatchProps) => {
 
   return (
     <body className={`transition-colors ${theme === 'light' ? 'bg-slate-100' : 'bg-slate-900'}`}>
-      <div id="victory-modal" onClick={useToggleModal()} className={`z-10 flex justify-center items-center w-screen h-screen fixed bg-slate-400/50 ${isModalOpen ? '' : 'hidden'}`}>
+      <div id="victory-modal" className={`z-10 fixed flex justify-center items-center w-screen h-screen ${isModalOpen ? '' : 'hidden'}`}>
+        <div onClick={useToggleModal()} className="w-screen h-screen fixed bg-slate-400/50"></div>
         <div className="flex flex-col justify-center items-center relative w-64 h-48 bg-pink-400 text-white rounded-md">
           You Win!!!
           <span onClick={useToggleModal()} className="z-20 absolute top-2 right-4 text-xl cursor-pointer text-black font-mono">x</span>
