@@ -17,8 +17,10 @@
   height: 100%;
   overflow: hidden;
   border-radius: 12px;
-  transition: transform 500ms ease-in-out;
   backface-visibility: hidden;
+  transition-property: transform, color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 400ms;
 }
 
 .card.visible .card-back {
@@ -32,12 +34,7 @@
 }
 
 .card-back {
-  background-color: black;
   transform: rotateY(0); 
-}
-
-.card-back img {
-  background: white;
 }
 
 .card-front {
