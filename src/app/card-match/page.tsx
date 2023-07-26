@@ -1,6 +1,7 @@
 'use client'
 
 import CardMatchPage from "./app";
+import { ModalProvider } from "./contexts/modal-context";
 import { ThemeProvider } from "./contexts/theme-context";
 
 interface CardMatchProps {
@@ -10,7 +11,9 @@ interface CardMatchProps {
 const App: React.FC<CardMatchProps> = (props:CardMatchProps) => {
   return (
     <ThemeProvider>
-      <CardMatchPage />
+      <ModalProvider>
+        <CardMatchPage />
+      </ModalProvider>
     </ThemeProvider>
   )
 }

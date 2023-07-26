@@ -1,6 +1,6 @@
 import { FormEvent, useRef } from "react";
 
-const NUMBER_LIMIT = 99;
+const NUMBER_LIMIT: 99 = 99;
 
 const shuffle = (arr:Array<Array<Number|String>>) => {
   let currentIndex = arr.length,  randomIndex;

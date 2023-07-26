@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import GameCard from './card';
-import { useTheme, useToggleTheme } from './contexts/theme-context';
+import { useToggleTheme } from './contexts/theme-context';
+import { useToggleModal } from './contexts/modal-context';
 
 interface CardGameBoardProps {
   setNumCards: Function
@@ -11,8 +12,8 @@ const CardGameBoard: React.FC<CardGameBoardProps> = (props:CardGameBoardProps) =
   const { setNumCards, cards } = props;
   const [board, setBoard] = useState<[number, string][]>(cards);
   const [matchedCards, setMatchedCards] = useState<number>(0);
-  const theme = useTheme();
   const toggleTheme = useToggleTheme();
+  const toggleModal = useToggleModal();
 
   let isBusy = useRef(false);
   let firstCard:any = useRef(null);
@@ -41,7 +42,7 @@ const CardGameBoard: React.FC<CardGameBoardProps> = (props:CardGameBoardProps) =
       setTimeout(() => {
         setBoard(oldBoard => oldBoard.map((card, i) => (i === firstIndex || i === secondIndex) ? [card[0], 'hidden'] : card));
         isBusy.current = false;
-      }, 2500)
+      }, 2000)
     }
     firstCard.current = null;
     secondCard.current = null;
@@ -50,9 +51,9 @@ const CardGameBoard: React.FC<CardGameBoardProps> = (props:CardGameBoardProps) =
 
   useEffect(() => {
     if (matchedCards === board.length) {
-      // dispatch usecontext/usereducer action to show modal on root page
-      window.alert('you win woo');
+      toggleModal();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [board, matchedCards]);
 
   return (
